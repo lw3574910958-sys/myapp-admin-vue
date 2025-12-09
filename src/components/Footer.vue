@@ -1,9 +1,9 @@
 <template>
   <div class="version">
-    <a target="_blank" class="copyright" href="https://github.com/lw3574910958-sys/myapp-admin"
+    <a target="_blank" class="copyright" href="https://github.com/lw3574910958-sys/myapp-admin-vue"
       >@2025-{{ currentYear }} myapp-admin
     </a>
-    <a target="_blank" class="version" href="https://github.com/lw3574910958-sys/myapp-admin"
+    <a target="_blank" class="version" href="https://github.com/lw3574910958-sys/myapp-admin-vue"
       >公众号: myapp-admin
     </a>
   </div>
