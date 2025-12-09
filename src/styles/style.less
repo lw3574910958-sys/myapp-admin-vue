@@ -1,0 +1,215 @@
+@import url(var.less);
+
+//全局样式
+* {
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  padding-right: 0 !important;
+}
+#app {
+  height: 100%;
+}
+a {
+  text-decoration: none;
+}
+.common-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  .el-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    &:not(:first-child) {
+      flex: 1;
+      overflow: hidden;
+    }
+  }
+  .el-header {
+    flex-shrink: 0;
+  }
+  .el-footer {
+    flex-shrink: 0;
+  }
+}
+
+//后台管理顶部菜单样式
+.header {
+  height: 90px;
+  width: 100%;
+  padding: 0 20px;
+  position: fixed;
+  z-index: 11;
+  top: 0;
+  left: 0;
+  background: @head;
+}
+.header-menu {
+  position: relative;
+  list-style: none;
+  height: @header--menu--height;
+}
+.header-logo {
+  float: left;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.header-title {
+  color: @headtitle;
+  height: 33px;
+  line-height: 33px;
+  vertical-align: middle;
+  margin-left: 10px;
+  font-size: @header--title-size;
+  font-weight: bold;
+  font-family: 'Arial', 'Microsoft YaHei', '黑体', '宋体', sans-serif;
+}
+.header-rinfo {
+  margin-right: 60px;
+  float: right;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  a {
+    cursor: pointer;
+    color: #ffffff;
+  }
+  .header-exit {
+    margin-left: 20px;
+  }
+}
+
+//后台管理左侧边栏样式
+.pdm-sidebar {
+  position: fixed;
+  top: @header--menu--height;
+  left: 0;
+  bottom: 0;
+  width: @pdm--sidebar-width;
+  z-index: 1000;
+  &--dark,
+  &--dark-popper {
+    background-color: @sidebar--background-color-dark;
+    .pdm-sidebar_menu.el-menu,
+    > .el-menu--popup {
+      background-color: @sidebar--background-color-dark;
+      .el-menu-item,
+      .el-submenu > .el-submenu_title {
+        color: @sidebar--text-color-dark;
+        &:focus,
+        &:hover {
+          color: mix(#fff, @sidebar--background-color-dark, 20%);
+          background-color: mix(#fff, @sidebar--background-color-dark, 5.5%);
+        }
+      }
+      .el-menu,
+      .el-submenu,
+      .is-opened {
+        background-color: mix(#000, @sidebar--background-color-dark, 20%);
+      }
+      .el-menu-item.is-active,
+      .el-submenu.is-active > .el-submenu_title {
+        color: mix(#fff, @sidebar--background-color-dark, 70%);
+      }
+    }
+  }
+  &_inner {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    width: 250px;
+    padding-bottom: 15px;
+    overflow-y: scroll;
+  }
+  &_menu.el-menu {
+    width: @pdm--sidebar-width;
+    border-right: 0;
+  }
+  &_menu-icon {
+    font-size: 16px;
+    width: 24px;
+    margin-right: 5px;
+    text-align: center;
+    color: inherit !important;
+  }
+}
+
+//侧边栏菜单标题字体大小
+.el-sub-menu_title,
+.el-menu-item {
+  font-size: @sidebar--menu--title-size;
+  font-weight: bold;
+}
+
+//后台管理内容区样式
+.pdm-content {
+  position: relative;
+  padding: 15px;
+  background: #f5f5f5;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  &_wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-left: @pdm--sidebar-width;
+    display: flex;
+    flex-direction: column;
+  }
+  &-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    :deep(.el-card__body) {
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+//底部版权样式
+.layout-footer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+  padding: 7px 0px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.88);
+  background: #f5f5f5;
+  .version,
+  .copyright {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 14px;
+    a {
+      &:hover {
+        color: #0a0e14;
+      }
+    }
+  }
+}
+
+.upload-text {
+  text-align: center;
+}
