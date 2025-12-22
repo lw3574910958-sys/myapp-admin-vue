@@ -4,6 +4,22 @@
 * {
   margin: 0;
   padding: 0;
+  user-select: none; // 禁止文本被选中
+  caret-color: transparent; // 隐藏插入光标
+}
+
+// 允许表单控件正常选中与输入光标
+input,
+textarea,
+[contenteditable='true'],
+// Element Plus 组件支持
+.el-input__inner,
+.el-textarea__inner,
+.el-input input,
+.el-textarea textarea,
+.el-select .el-input__inner {
+  user-select: text !important;
+  caret-color: auto !important;
 }
 
 html,
@@ -84,6 +100,12 @@ a {
   display: flex;
   align-items: center;
   height: 100%;
+  width: auto;
+  img {
+    height: 35px;
+    width: auto;
+    display: block;
+  }
 }
 .header-title {
   color: @headtitle;

@@ -1,5 +1,4 @@
 import { http, get, post } from '@/utils/request'
-import { pa } from 'element-plus/es/locales.mjs'
 
 export const adminApi = {
   /**

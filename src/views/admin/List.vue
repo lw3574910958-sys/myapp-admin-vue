@@ -2,11 +2,11 @@
   <div class="list-container">
     <el-form :inline="true">
       <el-form-item label="姓名：">
-        <el-input v-model="queryForm.name" placeholder="请输入姓名：" />
+        <el-input v-model="queryForm.name" placeholder="请输入姓名" />
       </el-form-item>
 
       <el-form-item label="电话：">
-        <el-input v-model="queryForm.phone" placeholder="请输入电话：" />
+        <el-input v-model="queryForm.phone" placeholder="请输入电话" />
       </el-form-item>
 
       <el-form-item>
@@ -190,6 +190,10 @@ function confirmDel(id?: any) {
       })
     })
 }
+/**
+ * 存储勾选id
+ * @param val
+ */
 const handleSelectionChange = (val: AdminRow[]) => {
   multipeSelection.value = val
 }

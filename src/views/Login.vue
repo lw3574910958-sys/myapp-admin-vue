@@ -68,6 +68,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { captchaApi } from '@/api/captcha-api'
 import { adminApi } from '@/api/admin-api'
 import router from '@/router'
+import { useAdminStore } from '@/stores/admin'
 
 const captchaImg = ref('')
 const formRef = ref()
@@ -75,7 +76,7 @@ const btnLoading = ref(false)
 
 async function getCaptcha() {
   try {
-    let captchaResult = await captchaApi.get()
+    let captchaResult = await captchaApi.getCaptcha()
     captchaImg.value = captchaResult.data.captchaImg
     formData.captchaId = captchaResult.data.captchaId
   } catch (e) {}
@@ -97,7 +98,7 @@ function onSubmit() {
     try {
       btnLoading.value = true
       let result = await adminApi.login(formData)
-
+      useAdminStore().setAdminInfo(result.data)
       router.push('/index')
     } catch (e: any) {
       if (e.data && e.data.code != 200) {

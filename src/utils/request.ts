@@ -22,10 +22,20 @@ service.interceptors.request.use(
   (config) => {
     //在请求头中加入token
     const token = getLocalStorage(constants.USER_TOKEN)
-    if (token) {
-      config.headers[TOKEN_NAME] = token
+    if (token && token.trim()) {
+      // 确保 headers 对象存在
+      if (!config.headers) {
+        config.headers = {} as any
+      }
+      // 移除可能存在的 Bearer 前缀，然后重新添加以确保格式正确
+      const cleanToken = token.replace(/^Bearer\s+/i, '').trim()
+      const tokenValue = `Bearer ${cleanToken}`
+      // 设置 header，确保使用正确的 header 名称
+      config.headers[TOKEN_NAME] = tokenValue
     } else {
-      delete config.headers[TOKEN_NAME]
+      if (config.headers) {
+        delete config.headers[TOKEN_NAME]
+      }
     }
     return config
   },

@@ -1,4 +1,3 @@
-// stores/counter.js
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from 'vue'
 import constants from '@/utils/constants'
@@ -14,8 +13,8 @@ export const useAdminStore = defineStore('admin', () => {
   })
 
   const getToken = computed(() => {
-    if (token) {
-      return token
+    if (token.value) {
+      return token.value
     }
     return getLocalStorage(constants.USER_TOKEN)
   })
@@ -39,5 +38,5 @@ export const useAdminStore = defineStore('admin', () => {
 
     clearLocalStorage()
   }
-  return { token, setAdminInfo, logout }
+  return { token, setAdminInfo, logout, admin, getToken }
 })

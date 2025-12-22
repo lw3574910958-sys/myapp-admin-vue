@@ -29,7 +29,14 @@
       </el-form-item>
 
       <el-form-item label="头像" prop="avatar">
-        <el-input v-model="formData.avatar" style="width: 50%" />
+        <file-upload
+          :max-upload-size="1"
+          :default-file-list="defaultFileList"
+          accept="jpg,jpeg,png,gif"
+          button-text="上传头像"
+          list-type="picture-card"
+          @update:value="handleAvatarUpdate"
+        />
       </el-form-item>
     </el-form>
 
@@ -46,12 +53,17 @@
 import { reactive, ref } from 'vue'
 import { adminApi } from '@/api/admin-api'
 import { ElMessage } from 'element-plus'
+import FileUpload from '@/components/FileUpload.vue'
+import { urls2FileList } from '@/utils/utils'
 
 //暴露方法给父组件调用
 defineExpose({
   showModel,
   onCancel,
 })
+
+//上传文件列表
+const defaultFileList = ref([])
 
 // 控制对话框显示与否
 const visible = ref(false)
@@ -74,7 +86,7 @@ const formDefault = {
   name: undefined,
   sex: undefined,
   phone: undefined,
-  avatar: undefined,
+  avatar: '' as string | undefined,
 }
 
 //表单数据
@@ -85,32 +97,49 @@ function showModel(row?: any) {
   if (row) {
     ureadonly.value = true
     Object.assign(formData, row)
+    let urls = formData.avatar
+    const fileList = urls2FileList(urls)
+    defaultFileList.value = fileList
   } else {
     ureadonly.value = false
     Object.assign(formData, formDefault)
+    defaultFileList.value = []
   }
   visible.value = true
 }
 
+/**
+ * 头像上传后触发的回调
+ */
+function handleAvatarUpdate(value: string) {
+  formData.avatar = value
+}
+
 //提交表单
 function onSubmit() {
-  formRef.value.validate().then(async () => {
-    try {
-      btnLoading.value = true
-      if (formData.id) {
-        await adminApi.update(formData)
-      } else {
-        await adminApi.add(formData)
+  formRef.value
+    .validate()
+    .then(async () => {
+      try {
+        btnLoading.value = true
+        if (formData.id) {
+          await adminApi.update(formData)
+        } else {
+          await adminApi.add(formData)
+        }
+        ElMessage.success(`${!formData.id ? '新增' : '修改'}管理员信息成功`)
+        visible.value = false
+        emit('refreshList')
+      } catch (e) {
+        console.error('Failed to submit form:', e)
+        ElMessage.error('提交失败')
+      } finally {
+        btnLoading.value = false
       }
-      ElMessage.success(`${!formData.id ? '新增' : '修改'}管理员信息成功`)
-      visible.value = false
-      emit('refreshList')
-    } catch (e) {
-      console.error('Failed to submit form:', e)
-    } finally {
-      btnLoading.value = false
-    }
-  })
+    })
+    .catch((err: any) => {
+      console.log('Form validation failed:', err)
+    })
 }
 
 //取消按钮
@@ -145,7 +174,7 @@ const rules = reactive({
   sex: [
     {
       required: true,
-      message: '请输入性别',
+      message: '请选择性别',
       trigger: 'blur',
     },
   ],
@@ -159,7 +188,7 @@ const rules = reactive({
   avatar: [
     {
       required: true,
-      message: '请输入头像地址',
+      message: '请上传头像',
       trigger: 'blur',
     },
   ],

@@ -1,5 +1,14 @@
 <template>
-  <h1>Welcome to the Application!</h1>
-  <p>This is the welcome page.</p>
-  <el-button type="primary">Get Started</el-button>
+  <div class="welcome-view">My Admin</div>
 </template>
+
+<style lang="less" scoped>
+.welcome-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 30px;
+  font-weight: bold;
+}
+</style>
