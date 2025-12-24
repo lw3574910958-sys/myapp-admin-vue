@@ -30,13 +30,13 @@
 
       <el-form-item label="头像" prop="avatar">
         <file-upload
-          :max-upload-size="2"
+          v-model:value="formData.avatar"
+          :max-upload-size="1"
           :default-file-list="defaultFileList"
           ref="uploadRef"
           accept="jpg,jpeg,png,gif"
           button-text="上传头像"
           list-type="picture-card"
-          @change="handleAvatarUpdate"
         />
       </el-form-item>
     </el-form>
@@ -44,7 +44,14 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="onCancel()">取消</el-button>
-        <el-button type="primary" @click="onSubmit()" :loading="btnLoading">确定</el-button>
+        <el-button
+          type="primary"
+          @click="onSubmit()"
+          :loading="btnLoading || uploadRef?.isUploading"
+          :disabled="uploadRef?.isUploading"
+        >
+          确定
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -99,6 +106,14 @@ function showModel(row?: any) {
     ureadonly.value = true
     Object.assign(formData, row)
     let urls = formData.avatar
+    // 确保urls是字符串类型
+    if (typeof urls !== 'string') {
+      urls = ''
+    }
+    // 如果urls为空字符串，设置为null以避免后续处理问题
+    if (urls === '') {
+      urls = undefined
+    }
     const fileList = urls2FileList(urls)
     defaultFileList.value = fileList
   } else {
@@ -109,29 +124,12 @@ function showModel(row?: any) {
   visible.value = true
 }
 
-/**
- * 头像上传后触发的回调
- */
-function handleAvatarUpdate(fileList: any) {
-  if (fileList && fileList.length > 0) {
-    formData.avatar = fileList.map((o: { name: any }) => o.name).toString()
-  } else {
-    formData.avatar = '' as any
-    defaultFileList.value = []
-  }
-}
-
 //文件上传组件
 const uploadRef = ref<any>(null)
 
 //提交表单
 function onSubmit() {
-  const validFiles = uploadRef.value?.getValidFiles()
-  if (validFiles.length === 0) {
-    ElMessage.warning('头像尚未上传成功，请等待上传完成后再提交')
-    return
-  }
-
+  // const validFiles = uploadRef.value?.getValidFiles()
   formRef.value
     .validate()
     .then(async () => {

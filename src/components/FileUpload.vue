@@ -36,6 +36,7 @@ import { computed, ref, watch } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { uploadFileApi } from '@/api/uploadFile-api'
+import { getFileUrl } from '@/utils/utils'
 
 const props = defineProps({
   value: String,
@@ -83,7 +84,8 @@ const props = defineProps({
 
 // 图片类型后缀名
 const imgFileType = ['jpg', 'jpeg', 'png', 'gif']
-
+// 监听上传状态
+const uploadingCount = ref(0)
 // 上传前检查
 const beforeUpload = (file: any) => {
   const isLtMaxSize = file.size / 1024 / 1024 < props.maxSize
@@ -105,21 +107,27 @@ const beforeUpload = (file: any) => {
 
 // 处理文件变化
 const handleChange = (file: any, fileListParam: any) => {
+  // Element Plus的el-upload组件管理文件列表，直接使用其提供的列表
   fileList.value = fileListParam
+  // 在文件状态变化时也更新值
+  updateValue()
 }
 
 // 处理文件移除
 const handleRemove = (file: any, fileListParam: any) => {
+  // 使用组件更新后的文件列表
   fileList.value = fileListParam
   updateValue()
 }
 
 // 更新值方法
 const updateValue = () => {
-  const urls = fileList.value
+  // 获取所有有效文件的URL
+  const validUrls = fileList.value
     .filter((file) => file.url && !file.url.startsWith('blob:'))
     .map((file) => file.url)
-    .join(',')
+  // 如果没有有效文件，返回空字符串
+  const urls = validUrls.length > 0 ? validUrls.join(',') : ''
   emit('update:value', urls)
 }
 const emit = defineEmits(['update:value'])
@@ -151,6 +159,7 @@ const handleCancel = () => {
 
 // 处理上传
 const handleUpload = async (options: any) => {
+  uploadingCount.value++
   const { file, onError, onSuccess } = options
   const formData = new FormData()
   formData.append('file', file)
@@ -169,14 +178,12 @@ const handleUpload = async (options: any) => {
     loadingInstance.close()
 
     if (response && response.code === 200 && response.data) {
-      // ✅ 返回上传成功后的文件信息，让 el-upload 自动更新
-      const newFile = {
-        uid: file.uid,
-        name: file.name,
-        url: response.data.name, // 使用相对路径
-        status: 'success',
+      // 在 fileList 中找到 uid 相同的文件项
+      const existingFile = fileList.value.find((item) => item.uid === file.uid)
+      if (existingFile) {
+        existingFile.url = getFileUrl(response.data.name) // 更新为真实路径
+        existingFile.status = 'success'
       }
-      fileList.value.push(newFile)
       updateValue() // 触发父组件更新
       onSuccess(response)
       ElMessage.success('上传成功')
@@ -190,6 +197,8 @@ const handleUpload = async (options: any) => {
     }
     onError(error)
     ElMessage.error(error?.msg || error?.message || '上传失败')
+  } finally {
+    uploadingCount.value--
   }
 }
 
@@ -198,6 +207,7 @@ defineExpose({
   getValidFiles() {
     return fileList.value.filter((file) => file.url && !file.url.startsWith('blob:'))
   },
+  isUploading: computed(() => uploadingCount.value > 0),
 })
 
 // 监听默认文件列表变化
@@ -214,7 +224,7 @@ watch(
   { immediate: true },
 )
 
-// 监听value变化
+/* // 监听value变化
 watch(
   () => props.value,
   (newVal) => {
@@ -222,7 +232,7 @@ watch(
       fileList.value = []
     }
   },
-)
+) */
 </script>
 
 <style scoped>
